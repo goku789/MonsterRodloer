@@ -2,46 +2,54 @@ import React, { Component } from 'react'
 
 export class App extends Component {
 
-constructor(props) {
-  super(props)
+  constructor(props) {
+    super(props)
 
-  this.state = {
-    monsteres:[],
-  }
-}
-
-componentDidMount(){
-  fetch('https://jsonplaceholder.typicode.com/users')
-  .then((response) => response.json())
-  .then((users)=>
-  this.setState(
-    ()=>{
-      return {monsteres:users};
-    },
-    ()=>{
-      console.log(this.state);
+    this.state = {
+      monsteres: [],
+      serachFeild: ''
     }
-  )
-  )
-}
+  }
 
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((response) => response.json())
+      .then((users) =>
+        this.setState(
+          () => {
+            return { monsteres: users };
+          },
+          () => {
+            console.log(this.state);
+          }
+        )
+      )
+  }
+  onSearchChange = (event) => {
+    const serachFeild = event.target.value.toLocaleLowerCase();
+    this.setState(() => {
+      return { serachFeild };
+    });
+
+  }
 
   render() {
+    const { monsteres, serachFeild } = this.state;
+    const { onSearchChange } = this
+    let arraydata = monsteres.filter((monster) => {
+      return monster.name.toLocaleLowerCase().includes(serachFeild)
+    })
     return (
       <div>
-        <input 
-        className='search-boxx' 
-        type='search' 
-        placeholder='search monsters' 
-        onChange={(event) =>{
-          console.log(event.target.value);
-          const arraydata=this.state.monsteres.filter(x=>x.name==event.target.value)
-          console.log(arraydata);
-        }}></input>
+        <input
+          className='search-boxx'
+          type='search'
+          placeholder='search monsters'
+          onChange={onSearchChange}></input>
 
         {
-          this.state.monsteres.map((monster)=>{
-            return(
+          arraydata.map((monster) => {
+            return (
               <div key={monster.id}>
                 <h1>{monster.name}</h1>
               </div>
